@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ProjectSettings
+/UserSettings
+/Library
+/Assets/Settings
+/Assets/Materials
+/Assets/Scenes
+/Assets/New Terrain.asset
+/Assets/UniversalRenderPipelineGlobalSettings.asset
