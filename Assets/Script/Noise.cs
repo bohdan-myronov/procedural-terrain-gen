@@ -70,7 +70,7 @@ public static class Noise
         }
         return offsets;
     }
-    public static Color[] GenerateColorMap(float[,] noiseMap, TerrainType[] regions)
+    public static Color[] GenerateColorMap(float[,] noiseMap, Region[] regions)
     {
         int width = noiseMap.GetLength(0);
         int height = noiseMap.GetLength(1);
@@ -85,7 +85,42 @@ public static class Noise
                 {
                     if (currentHeight < regions[i].heightCondition)
                     {
-                        colormap[y * width + x] = regions[i].color;
+                        colormap[y * width + x] = regions[i].colorThreshold;
+                        break;
+                    }
+                }
+            }
+        }
+        return colormap;
+    }
+    public static Color[] GenerateDiversiveColorMap(float[,] noiseMap, Region[] regions)
+    {
+        int width = noiseMap.GetLength(0);
+        int height = noiseMap.GetLength(1);
+        Color[] colormap = new Color[width * height];
+        if (regions == null) throw new System.Exception("No region preset included");
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float currentHeight = noiseMap[x, y];
+                for (int i = 0; i < regions.Length; i++)
+                {
+                    if (currentHeight < regions[i].heightCondition)
+                    {
+                        ////
+                        //// [lowerBound;upperBound] нормалізується до [0;1]
+                        //// lowerBound - значення попереднього регіону
+                        //// upperBound - значення поточного регіону
+                        //// значення з мапи висот нормалізується відповідно до ...
+                        ///
+                        float lowerBound = 0;
+                        if (i != 0) lowerBound= regions[i - 1].heightCondition;
+
+                        float upperBound = regions[i].heightCondition;
+                        float multiplier = 1 / (upperBound - lowerBound);
+                        float normalizedNumber = 1 - (upperBound - currentHeight) * multiplier;
+                        colormap[y * width + x] = Color.Lerp(regions[i].colorThreshold, regions[i].colorBound, normalizedNumber);
                         break;
                     }
                 }
